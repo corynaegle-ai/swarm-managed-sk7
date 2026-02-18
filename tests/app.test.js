@@ -60,6 +60,12 @@ describe('GameState', () => {
             const john = gameState.players[0];
             const jane = gameState.players[1];
             
+            // Mock DOM elements with data-entered attributes
+            document.body.innerHTML = `
+                <input id="score-${john.id}-1" data-entered="true" />
+                <input id="score-${jane.id}-1" data-entered="true" />
+            `;
+            
             gameState.updateRoundScore(john.id, 1, 10);
             gameState.updateRoundScore(jane.id, 1, 15);
             
