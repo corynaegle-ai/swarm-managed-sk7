@@ -5,13 +5,14 @@
 class GameController {
     constructor(gameState) {
         this.gameState = gameState;
-        this.phaseIndicators = null;
-        this.roundCounter = null;
-        this.newGameButton = null;
-        this.gameContainer = null;
-        this.gameOverScreen = null;
+        this.domElements = {};
+        this.boundEventHandlers = {};
         
-        this.init();
+        // Initialize bound event handlers to prevent memory leaks
+        this.boundEventHandlers.handlePhaseChange = this.handlePhaseChange.bind(this);
+        this.boundEventHandlers.handleRoundUpdate = this.handleRoundUpdate.bind(this);
+        this.boundEventHandlers.handleGameOver = this.handleGameOver.bind(this);
+        this.boundEventHandlers.handleGameReset = this.handleGameReset.bind(this);
     }
 
     /**
@@ -19,151 +20,270 @@ class GameController {
      */
     init() {
         try {
-            // Cache DOM elements
-            this.phaseIndicators = document.querySelectorAll('[data-phase]');
-            this.roundCounter = document.querySelector('[data-round-counter]');
-            this.newGameButton = document.querySelector('[data-new-game]');
-            this.gameContainer = document.querySelector('[data-game-container]');
-            this.gameOverScreen = document.querySelector('[data-game-over]');
-            
-            // Listen for GameState events
-            if (this.gameState) {
-                this.gameState.addEventListener('stateChanged', this.handleStateChange.bind(this));
-                this.gameState.addEventListener('phaseChanged', this.handlePhaseChange.bind(this));
-                this.gameState.addEventListener('roundChanged', this.handleRoundChange.bind(this));
-                this.gameState.addEventListener('gameOver', this.handleGameOver.bind(this));
-            }
-            
-            // Set up new game button
-            if (this.newGameButton) {
-                this.newGameButton.addEventListener('click', this.startNewGame.bind(this));
-            }
-            
-            // Initialize UI to current state
-            this.updateUI();
-            
+            this.cacheDOMElements();
+            this.setupEventListeners();
+            this.initialUIUpdate();
         } catch (error) {
-            console.error('GameController initialization failed:', error);
+            console.error('Failed to initialize GameController:', error);
+            throw error;
         }
     }
 
     /**
-     * Handle general state changes
+     * Cache DOM elements to avoid repeated queries
      */
-    handleStateChange(event) {
-        try {
-            this.updateUI();
-        } catch (error) {
-            console.error('Error handling state change:', error);
+    cacheDOMElements() {
+        const selectors = {
+            phaseIndicator: '.phase-indicator',
+            roundCounter: '.round-counter',
+            newGameButton: '.new-game-button',
+            gameOverScreen: '.game-over-screen',
+            planningPhaseElements: '.planning-phase',
+            actionPhaseElements: '.action-phase',
+            resolutionPhaseElements: '.resolution-phase',
+            gameEndElements: '.game-end'
+        };
+
+        for (const [key, selector] of Object.entries(selectors)) {
+            if (key.includes('Elements')) {
+                // For elements that might have multiple matches
+                this.domElements[key] = document.querySelectorAll(selector);
+            } else {
+                // For single elements
+                this.domElements[key] = document.querySelector(selector);
+            }
         }
     }
 
     /**
-     * Handle phase transitions and update phase indicators
+     * Set up event listeners with proper validation
+     */
+    setupEventListeners() {
+        if (!this.gameState) {
+            throw new Error('GameState is required but not provided');
+        }
+
+        if (typeof this.gameState.addEventListener !== 'function') {
+            throw new Error('GameState must implement EventTarget interface');
+        }
+
+        // Set up game state event listeners
+        this.gameState.addEventListener('phaseChange', this.boundEventHandlers.handlePhaseChange);
+        this.gameState.addEventListener('roundUpdate', this.boundEventHandlers.handleRoundUpdate);
+        this.gameState.addEventListener('gameOver', this.boundEventHandlers.handleGameOver);
+        this.gameState.addEventListener('gameReset', this.boundEventHandlers.handleGameReset);
+
+        // Set up new game button listener
+        if (this.domElements.newGameButton) {
+            this.domElements.newGameButton.addEventListener('click', () => this.startNewGame());
+        }
+    }
+
+    /**
+     * Handle phase change events with consistent pattern
+     * @param {CustomEvent} event - Phase change event
      */
     handlePhaseChange(event) {
         try {
-            const currentPhase = event.detail ? event.detail.phase : this.gameState.getCurrentPhase();
+            const phase = event?.detail?.phase || this.getCurrentPhase();
+            if (!phase) {
+                console.warn('Phase change event received but no phase data available');
+                return;
+            }
             
-            // Update phase indicators
-            this.phaseIndicators.forEach(indicator => {
-                const phase = indicator.dataset.phase;
-                if (phase === currentPhase) {
-                    indicator.classList.add('active', 'current-phase');
-                    indicator.classList.remove('inactive');
-                } else {
-                    indicator.classList.remove('active', 'current-phase');
-                    indicator.classList.add('inactive');
-                }
-            });
-            
-            // Show/hide phase-specific UI elements
-            this.updatePhaseSpecificUI(currentPhase);
-            
+            this.updatePhaseIndicator(phase);
+            this.updatePhaseSpecificUI(phase);
         } catch (error) {
             console.error('Error handling phase change:', error);
         }
     }
 
     /**
-     * Handle round counter updates
+     * Handle round update events with consistent pattern
+     * @param {CustomEvent} event - Round update event
      */
-    handleRoundChange(event) {
+    handleRoundUpdate(event) {
         try {
-            const currentRound = event.detail ? event.detail.round : this.gameState.getCurrentRound();
-            
-            if (this.roundCounter) {
-                this.roundCounter.textContent = currentRound;
-                this.roundCounter.classList.add('updated');
-                
-                // Remove animation class after animation completes
-                setTimeout(() => {
-                    this.roundCounter.classList.remove('updated');
-                }, 300);
+            const round = event?.detail?.round || this.getCurrentRound();
+            if (round !== null && round !== undefined) {
+                this.updateRoundCounter(round);
             }
-            
         } catch (error) {
-            console.error('Error handling round change:', error);
+            console.error('Error handling round update:', error);
         }
     }
 
     /**
-     * Handle game over state
+     * Handle game over events with consistent pattern
+     * @param {CustomEvent} event - Game over event
      */
     handleGameOver(event) {
         try {
-            // Hide game container
-            if (this.gameContainer) {
-                this.gameContainer.classList.add('hidden');
-            }
-            
-            // Show game over screen
-            if (this.gameOverScreen) {
-                this.gameOverScreen.classList.remove('hidden');
-                this.gameOverScreen.classList.add('visible');
-            }
-            
-            // Show new game button
-            if (this.newGameButton) {
-                this.newGameButton.classList.remove('hidden');
-                this.newGameButton.classList.add('visible');
-            }
-            
+            const gameData = event?.detail || {};
+            this.showGameOverUI(gameData);
         } catch (error) {
             console.error('Error handling game over:', error);
         }
     }
 
     /**
+     * Handle game reset events with consistent pattern
+     * @param {CustomEvent} event - Game reset event
+     */
+    handleGameReset(event) {
+        try {
+            this.resetUI();
+        } catch (error) {
+            console.error('Error handling game reset:', error);
+        }
+    }
+
+    /**
+     * Update the phase indicator UI
+     * @param {string} phase - Current game phase
+     */
+    updatePhaseIndicator(phase) {
+        if (!this.domElements.phaseIndicator) return;
+        
+        this.domElements.phaseIndicator.textContent = this.formatPhaseName(phase);
+        this.domElements.phaseIndicator.className = `phase-indicator phase-${phase.toLowerCase()}`;
+    }
+
+    /**
      * Update phase-specific UI elements visibility
+     * @param {string} phase - Current game phase
      */
     updatePhaseSpecificUI(phase) {
-        try {
-            const phaseElements = {
-                'setup': document.querySelectorAll('[data-phase-ui="setup"]'),
-                'planning': document.querySelectorAll('[data-phase-ui="planning"]'),
-                'execution': document.querySelectorAll('[data-phase-ui="execution"]'),
-                'resolution': document.querySelectorAll('[data-phase-ui="resolution"]')
-            };
-            
-            // Hide all phase-specific elements first
-            Object.values(phaseElements).forEach(elements => {
-                elements.forEach(element => {
-                    element.classList.add('hidden');
-                    element.classList.remove('visible');
-                });
-            });
-            
-            // Show elements for current phase
-            if (phaseElements[phase]) {
-                phaseElements[phase].forEach(element => {
-                    element.classList.remove('hidden');
-                    element.classList.add('visible');
-                });
+        const phaseMap = {
+            'planning': this.domElements.planningPhaseElements,
+            'action': this.domElements.actionPhaseElements,
+            'resolution': this.domElements.resolutionPhaseElements,
+            'gameEnd': this.domElements.gameEndElements
+        };
+
+        // Hide all phase-specific elements
+        Object.values(phaseMap).forEach(elements => {
+            if (elements && elements.length) {
+                elements.forEach(el => el.classList.add('hidden'));
             }
-            
+        });
+
+        // Show current phase elements
+        const currentPhaseElements = phaseMap[phase.toLowerCase()];
+        if (currentPhaseElements && currentPhaseElements.length) {
+            currentPhaseElements.forEach(el => el.classList.remove('hidden'));
+        }
+    }
+
+    /**
+     * Update the round counter display
+     * @param {number} round - Current round number
+     */
+    updateRoundCounter(round) {
+        if (!this.domElements.roundCounter) return;
+        
+        this.domElements.roundCounter.textContent = `Round: ${round}`;
+    }
+
+    /**
+     * Show game over UI elements
+     * @param {Object} gameData - Game completion data
+     */
+    showGameOverUI(gameData) {
+        // Show game over screen
+        if (this.domElements.gameOverScreen) {
+            this.domElements.gameOverScreen.classList.remove('hidden');
+        }
+
+        // Show new game button
+        if (this.domElements.newGameButton) {
+            this.domElements.newGameButton.classList.remove('hidden');
+        }
+
+        // Hide game-specific UI elements
+        this.hideActiveGameUI();
+    }
+
+    /**
+     * Hide active game UI elements
+     */
+    hideActiveGameUI() {
+        const elementsToHide = [
+            this.domElements.planningPhaseElements,
+            this.domElements.actionPhaseElements,
+            this.domElements.resolutionPhaseElements
+        ];
+
+        elementsToHide.forEach(elements => {
+            if (elements && elements.length) {
+                elements.forEach(el => el.classList.add('hidden'));
+            }
+        });
+    }
+
+    /**
+     * Reset UI to initial state
+     */
+    resetUI() {
+        // Hide game over elements
+        if (this.domElements.gameOverScreen) {
+            this.domElements.gameOverScreen.classList.add('hidden');
+        }
+
+        if (this.domElements.newGameButton) {
+            this.domElements.newGameButton.classList.add('hidden');
+        }
+
+        // Reset counters and indicators
+        this.updateRoundCounter(1);
+        this.updatePhaseIndicator('planning');
+        this.updatePhaseSpecificUI('planning');
+    }
+
+    /**
+     * Perform initial UI update based on current game state
+     */
+    initialUIUpdate() {
+        try {
+            const currentPhase = this.getCurrentPhase();
+            const currentRound = this.getCurrentRound();
+            const isGameOver = this.isGameOver();
+
+            if (isGameOver) {
+                this.showGameOverUI({});
+            } else {
+                this.updatePhaseIndicator(currentPhase);
+                this.updatePhaseSpecificUI(currentPhase);
+                this.updateRoundCounter(currentRound);
+            }
         } catch (error) {
-            console.error('Error updating phase-specific UI:', error);
+            console.error('Error during initial UI update:', error);
+        }
+    }
+
+    /**
+     * Start a new game with full validation
+     */
+    startNewGame() {
+        try {
+            if (!this.gameState) {
+                throw new Error('GameState not available');
+            }
+
+            // Validate all required methods exist
+            const requiredMethods = ['reset', 'getCurrentPhase', 'getCurrentRound', 'isGameOver'];
+            for (const method of requiredMethods) {
+                if (typeof this.gameState[method] !== 'function') {
+                    throw new Error(`GameState.${method} is not a function`);
+                }
+            }
+
+            // Reset the game state
+            this.gameState.reset();
+            
+            // UI will be updated through the gameReset event handler
+        } catch (error) {
+            console.error('Failed to start new game:', error);
         }
     }
 
@@ -172,162 +292,79 @@ class GameController {
      */
     updateUI() {
         try {
-            if (!this.gameState) {
-                console.warn('GameState not available for UI update');
-                return;
-            }
-            
-            const currentPhase = this.gameState.getCurrentPhase();
-            const currentRound = this.gameState.getCurrentRound();
-            const isGameOver = this.gameState.isGameOver();
-            
-            // Update phase indicators
-            this.updatePhaseIndicators(currentPhase);
-            
-            // Update round counter
-            this.updateRoundCounter(currentRound);
-            
-            // Update phase-specific UI
-            this.updatePhaseSpecificUI(currentPhase);
-            
-            // Handle game over state
-            if (isGameOver) {
-                this.showGameOverUI();
-            } else {
-                this.hideGameOverUI();
-            }
-            
+            this.initialUIUpdate();
         } catch (error) {
             console.error('Error updating UI:', error);
         }
     }
 
     /**
-     * Update phase indicators
+     * Get current phase with error handling
+     * @returns {string} Current game phase
      */
-    updatePhaseIndicators(currentPhase) {
-        try {
-            this.phaseIndicators.forEach(indicator => {
-                const phase = indicator.dataset.phase;
-                if (phase === currentPhase) {
-                    indicator.classList.add('active', 'current-phase');
-                    indicator.classList.remove('inactive');
-                } else {
-                    indicator.classList.remove('active', 'current-phase');
-                    indicator.classList.add('inactive');
-                }
-            });
-        } catch (error) {
-            console.error('Error updating phase indicators:', error);
+    getCurrentPhase() {
+        if (this.gameState && typeof this.gameState.getCurrentPhase === 'function') {
+            return this.gameState.getCurrentPhase();
         }
+        return 'planning'; // Default fallback
     }
 
     /**
-     * Update round counter display
+     * Get current round with error handling
+     * @returns {number} Current round number
      */
-    updateRoundCounter(round) {
-        try {
-            if (this.roundCounter) {
-                this.roundCounter.textContent = round;
-            }
-        } catch (error) {
-            console.error('Error updating round counter:', error);
+    getCurrentRound() {
+        if (this.gameState && typeof this.gameState.getCurrentRound === 'function') {
+            return this.gameState.getCurrentRound();
         }
+        return 1; // Default fallback
     }
 
     /**
-     * Show game over UI elements
+     * Check if game is over with error handling
+     * @returns {boolean} True if game is over
      */
-    showGameOverUI() {
-        try {
-            if (this.gameContainer) {
-                this.gameContainer.classList.add('hidden');
-            }
-            
-            if (this.gameOverScreen) {
-                this.gameOverScreen.classList.remove('hidden');
-                this.gameOverScreen.classList.add('visible');
-            }
-            
-            if (this.newGameButton) {
-                this.newGameButton.classList.remove('hidden');
-                this.newGameButton.classList.add('visible');
-            }
-        } catch (error) {
-            console.error('Error showing game over UI:', error);
+    isGameOver() {
+        if (this.gameState && typeof this.gameState.isGameOver === 'function') {
+            return this.gameState.isGameOver();
         }
+        return false; // Default fallback
     }
 
     /**
-     * Hide game over UI elements
+     * Format phase name for display
+     * @param {string} phase - Phase name
+     * @returns {string} Formatted phase name
      */
-    hideGameOverUI() {
-        try {
-            if (this.gameContainer) {
-                this.gameContainer.classList.remove('hidden');
-            }
-            
-            if (this.gameOverScreen) {
-                this.gameOverScreen.classList.add('hidden');
-                this.gameOverScreen.classList.remove('visible');
-            }
-            
-            if (this.newGameButton) {
-                this.newGameButton.classList.add('hidden');
-                this.newGameButton.classList.remove('visible');
-            }
-        } catch (error) {
-            console.error('Error hiding game over UI:', error);
-        }
+    formatPhaseName(phase) {
+        return phase.charAt(0).toUpperCase() + phase.slice(1).toLowerCase();
     }
 
     /**
-     * Start a new game
-     */
-    startNewGame() {
-        try {
-            if (this.gameState && typeof this.gameState.reset === 'function') {
-                this.gameState.reset();
-            }
-            
-            // Hide game over UI
-            this.hideGameOverUI();
-            
-            // Initialize UI for new game
-            this.updateUI();
-            
-            console.log('New game started');
-            
-        } catch (error) {
-            console.error('Error starting new game:', error);
-        }
-    }
-
-    /**
-     * Destroy the controller and clean up event listeners
+     * Clean up event listeners and prevent memory leaks
      */
     destroy() {
-        try {
-            if (this.gameState) {
-                this.gameState.removeEventListener('stateChanged', this.handleStateChange.bind(this));
-                this.gameState.removeEventListener('phaseChanged', this.handlePhaseChange.bind(this));
-                this.gameState.removeEventListener('roundChanged', this.handleRoundChange.bind(this));
-                this.gameState.removeEventListener('gameOver', this.handleGameOver.bind(this));
-            }
-            
-            if (this.newGameButton) {
-                this.newGameButton.removeEventListener('click', this.startNewGame.bind(this));
-            }
-            
-        } catch (error) {
-            console.error('Error destroying GameController:', error);
+        if (this.gameState && typeof this.gameState.removeEventListener === 'function') {
+            // Remove event listeners using the same bound references
+            this.gameState.removeEventListener('phaseChange', this.boundEventHandlers.handlePhaseChange);
+            this.gameState.removeEventListener('roundUpdate', this.boundEventHandlers.handleRoundUpdate);
+            this.gameState.removeEventListener('gameOver', this.boundEventHandlers.handleGameOver);
+            this.gameState.removeEventListener('gameReset', this.boundEventHandlers.handleGameReset);
         }
+
+        // Clear references
+        this.gameState = null;
+        this.domElements = {};
+        this.boundEventHandlers = {};
     }
 }
 
-// Export for use in other modules
+// Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = GameController;
-} else if (typeof window !== 'undefined') {
+}
+
+// Global assignment for browser usage
+if (typeof window !== 'undefined') {
     window.GameController = GameController;
 }
