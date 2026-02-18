@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spades Game</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+        
+        #bidding-phase {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        #round-info {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        #player-bids-container {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .player-bid-form {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 3px;
+            background-color: #fafafa;
+        }
+        
+        .player-bid-form label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+        }
+        
+        .player-bid-form input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            width: 60px;
+        }
+        
+        #bid-validation-messages {
+            background-color: #ffe6e6;
+            border: 1px solid #ffcccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            color: #d00;
+        }
+        
+        #bid-validation-messages.hidden {
+            display: none;
+        }
+        
+        #continue-from-bidding {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        #continue-from-bidding:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        #continue-from-bidding:hover:not(:disabled) {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main game container -->
+    <div id="game-container">
+        <!-- Bidding Phase Section -->
+        <section id="bidding-phase" class="hidden" data-phase="bidding" role="main">
+            <h2>Bidding Phase</h2>
+            
+            <!-- Round Information Display -->
+            <div id="round-info" data-info-type="round" role="banner">
+                <h3>Round <span id="current-round-number" data-value="1">1</span></h3>
+                <p>Hands this round: <span id="current-hands-count" data-value="13">13</span></p>
+                <p>Total players: <span id="total-players-count" data-value="4">4</span></p>
+            </div>
+            
+            <!-- Player Bids Container -->
+            <div id="player-bids-container" data-container-type="bids" role="form">
+                <h4>Player Bids</h4>
+                <div id="bid-forms-wrapper" data-forms-container="true">
+                    <!-- Template structure for dynamically generated player bid forms -->
+                    <template id="player-bid-form-template">
+                        <div class="player-bid-form" data-player-id="" data-form-type="bid">
+                            <label for="" class="player-name-label" data-label-type="player"></label>
+                            <input type="number" 
+                                   id="" 
+                                   name="" 
+                                   min="0" 
+                                   max="13" 
+                                   value="0" 
+                                   data-input-type="bid" 
+                                   data-player-id="" 
+                                   aria-label="Bid amount" 
+                                   required>
+                            <span class="bid-help-text" data-help-type="bid">Enter bid (0-13)</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            
+            <!-- Bid Validation Messages -->
+            <div id="bid-validation-messages" class="hidden" data-message-type="validation" role="alert" aria-live="polite">
+                <h5>Validation Errors:</h5>
+                <ul id="validation-errors-list" data-errors-container="true">
+                    <!-- Error messages will be dynamically inserted here -->
+                </ul>
+            </div>
+            
+            <!-- Continue Button -->
+            <div class="button-container">
+                <button id="continue-from-bidding" 
+                        type="button" 
+                        disabled 
+                        data-action="continue" 
+                        data-from-phase="bidding" 
+                        aria-label="Continue to next phase">
+                    Continue to Playing Phase
+                </button>
+            </div>
+        </section>
+        
+        <!-- Other game phases would go here -->
+        <!-- <section id="playing-phase" class="hidden">...</section> -->
+        <!-- <section id="scoring-phase" class="hidden">...</section> -->
+    </div>
+    
+    <!-- JavaScript will be added later to handle the dynamic functionality -->
+    <script>
+        // Placeholder for future JavaScript implementation
+        // This script section demonstrates how the elements can be targeted:
+        
+        // Example: Show bidding phase
+        // document.getElementById('bidding-phase').classList.remove('hidden');
+        
+        // Example: Update round info
+        // document.getElementById('current-round-number').textContent = '2';
+        // document.getElementById('current-hands-count').textContent = '12';
+        
+        // Example: Enable continue button
+        // document.getElementById('continue-from-bidding').disabled = false;
+        
+        // Example: Show validation messages
+        // document.getElementById('bid-validation-messages').classList.remove('hidden');
+    </script>
+</body>
+</html>

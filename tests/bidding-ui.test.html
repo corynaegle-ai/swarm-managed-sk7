@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bidding UI Tests</title>
+    <style>
+        .test-results {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .test-case {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid #ccc;
+        }
+        
+        .test-pass {
+            border-left-color: #4CAF50;
+            background-color: #f0fff0;
+        }
+        
+        .test-fail {
+            border-left-color: #f44336;
+            background-color: #fff0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-results">
+        <h1>Bidding Phase UI Element Tests</h1>
+        <div id="test-output"></div>
+    </div>
+    
+    <!-- Include the main HTML structure for testing -->
+    <iframe src="../index.html" style="display: none;" id="test-frame"></iframe>
+    
+    <script>
+        // Test suite for bidding phase UI elements
+        class BiddingUITests {
+            constructor() {
+                this.testResults = [];
+                this.iframe = document.getElementById('test-frame');
+            }
+            
+            runTests() {
+                this.iframe.onload = () => {
+                    const doc = this.iframe.contentDocument;
+                    
+                    this.testBiddingPhaseExists(doc);
+                    this.testBiddingPhaseHidden(doc);
+                    this.testRoundInfoExists(doc);
+                    this.testPlayerBidsContainer(doc);
+                    this.testBidValidationMessages(doc);
+                    this.testContinueButton(doc);
+                    this.testDataAttributes(doc);
+                    this.testTemplate(doc);
+                    
+                    this.displayResults();
+                };
+            }
+            
+            testBiddingPhaseExists(doc) {
+                const element = doc.getElementById('bidding-phase');
+                this.addTest(
+                    'Bidding phase element exists',
+                    element !== null,
+                    element ? 'Found div#bidding-phase' : 'div#bidding-phase not found'
+                );
+            }
+            
+            testBiddingPhaseHidden(doc) {
+                const element = doc.getElementById('bidding-phase');
+                const hasHiddenClass = element && element.classList.contains('hidden');
+                this.addTest(
+                    'Bidding phase initially hidden',
+                    hasHiddenClass,
+                    hasHiddenClass ? 'Has hidden class' : 'Missing hidden class'
+                );
+            }
+            
+            testRoundInfoExists(doc) {
+                const element = doc.getElementById('round-info');
+                this.addTest(
+                    'Round info element exists',
+                    element !== null,
+                    element ? 'Found div#round-info' : 'div#round-info not found'
+                );
+            }
+            
+            testPlayerBidsContainer(doc) {
+                const element = doc.getElementById('player-bids-container');
+                this.addTest(
+                    'Player bids container exists',
+                    element !== null,
+                    element ? 'Found div#player-bids-container' : 'div#player-bids-container not found'
+                );
+            }
+            
+            testBidValidationMessages(doc) {
+                const element = doc.getElementById('bid-validation-messages');
+                this.addTest(
+                    'Bid validation messages element exists',
+                    element !== null,
+                    element ? 'Found div#bid-validation-messages' : 'div#bid-validation-messages not found'
+                );
+            }
+            
+            testContinueButton(doc) {
+                const element = doc.getElementById('continue-from-bidding');
+                const isDisabled = element && element.disabled;
+                this.addTest(
+                    'Continue button exists and is initially disabled',
+                    element !== null && isDisabled,
+                    element ? (isDisabled ? 'Button found and disabled' : 'Button found but not disabled') : 'Button not found'
+                );
+            }
+            
+            testDataAttributes(doc) {
+                const biddingPhase = doc.getElementById('bidding-phase');
+                const roundInfo = doc.getElementById('round-info');
+                const bidsContainer = doc.getElementById('player-bids-container');
+                
+                const hasDataPhase = biddingPhase && biddingPhase.hasAttribute('data-phase');
+                const hasDataInfoType = roundInfo && roundInfo.hasAttribute('data-info-type');
+                const hasDataContainerType = bidsContainer && bidsContainer.hasAttribute('data-container-type');
+                
+                this.addTest(
+                    'Data attributes present for JavaScript targeting',
+                    hasDataPhase && hasDataInfoType && hasDataContainerType,
+                    'All required data attributes found'
+                );
+            }
+            
+            testTemplate(doc) {
+                const template = doc.getElementById('player-bid-form-template');
+                this.addTest(
+                    'Player bid form template exists',
+                    template !== null && template.tagName.toLowerCase() === 'template',
+                    template ? 'Template element found' : 'Template element not found'
+                );
+            }
+            
+            addTest(name, passed, details) {
+                this.testResults.push({ name, passed, details });
+            }
+            
+            displayResults() {
+                const output = document.getElementById('test-output');
+                let html = '';
+                
+                this.testResults.forEach(test => {
+                    const cssClass = test.passed ? 'test-pass' : 'test-fail';
+                    const status = test.passed ? 'PASS' : 'FAIL';
+                    html += `
+                        <div class="test-case ${cssClass}">
+                            <strong>[${status}] ${test.name}</strong><br>
+                            ${test.details}
+                        </div>
+                    `;
+                });
+                
+                const passCount = this.testResults.filter(t => t.passed).length;
+                const totalCount = this.testResults.length;
+                
+                output.innerHTML = `
+                    <h2>Test Results: ${passCount}/${totalCount} passed</h2>
+                    ${html}
+                `;
+            }
+        }
+        
+        // Run tests when page loads
+        window.onload = () => {
+            const tests = new BiddingUITests();
+            tests.runTests();
+        };
+    </script>
+</body>
+</html>
