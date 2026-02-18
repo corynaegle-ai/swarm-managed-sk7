@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swarm Managed Game</title>
+    <link rel="stylesheet" href="css/game-flow.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Game Header with Round Progress -->
+        <header class="game-header">
+            <div class="round-counter">
+                <span class="round-label">Round</span>
+                <span class="round-current">1</span>
+                <span class="round-separator">of</span>
+                <span class="round-total">10</span>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" data-progress="10"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Phase Indicator -->
+        <div class="phase-indicator">
+            <div class="phase-item active" data-phase="setup">
+                <div class="phase-icon">⚙️</div>
+                <div class="phase-name">Setup</div>
+            </div>
+            <div class="phase-item" data-phase="bidding">
+                <div class="phase-icon">💰</div>
+                <div class="phase-name">Bidding</div>
+            </div>
+            <div class="phase-item" data-phase="scoring">
+                <div class="phase-icon">📊</div>
+                <div class="phase-name">Scoring</div>
+            </div>
+        </div>
+
+        <!-- Main Game Content Area -->
+        <main class="game-content">
+            <!-- Setup Phase Content -->
+            <div class="phase-content active" id="setup-phase">
+                <h2>Game Setup</h2>
+                <div class="setup-controls">
+                    <p>Preparing game components...</p>
+                    <button class="phase-action-btn" id="start-bidding">Start Bidding Phase</button>
+                </div>
+            </div>
+
+            <!-- Bidding Phase Content -->
+            <div class="phase-content" id="bidding-phase">
+                <h2>Bidding Phase</h2>
+                <div class="bidding-controls">
+                    <p>Place your bids for this round.</p>
+                    <div class="bid-input-area">
+                        <input type="number" id="bid-amount" placeholder="Enter bid amount" min="0">
+                        <button class="phase-action-btn" id="submit-bid">Submit Bid</button>
+                    </div>
+                    <button class="phase-action-btn secondary" id="proceed-scoring">Proceed to Scoring</button>
+                </div>
+            </div>
+
+            <!-- Scoring Phase Content -->
+            <div class="phase-content" id="scoring-phase">
+                <h2>Scoring Phase</h2>
+                <div class="scoring-display">
+                    <p>Round results and scoring...</p>
+                    <div class="score-summary">
+                        <div class="player-scores">
+                            <p>Scores will be displayed here</p>
+                        </div>
+                    </div>
+                    <button class="phase-action-btn" id="next-round">Next Round</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Game Status Footer -->
+        <footer class="game-status">
+            <div class="current-phase-display">
+                Current Phase: <span id="current-phase-text">Setup</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Basic phase switching functionality
+        function switchPhase(newPhase) {
+            // Remove active class from all phase items and content
+            document.querySelectorAll('.phase-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.phase-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Add active class to new phase
+            document.querySelector(`[data-phase="${newPhase}"]`).classList.add('active');
+            document.getElementById(`${newPhase}-phase`).classList.add('active');
+            document.getElementById('current-phase-text').textContent = newPhase.charAt(0).toUpperCase() + newPhase.slice(1);
+        }
+        
+        function updateRound(currentRound) {
+            document.querySelector('.round-current').textContent = currentRound;
+            const progress = (currentRound / 10) * 100;
+            document.querySelector('.progress-fill').style.width = progress + '%';
+            document.querySelector('.progress-fill').setAttribute('data-progress', progress);
+        }
+        
+        // Event listeners for phase transitions
+        document.getElementById('start-bidding').addEventListener('click', () => {
+            switchPhase('bidding');
+        });
+        
+        document.getElementById('proceed-scoring').addEventListener('click', () => {
+            switchPhase('scoring');
+        });
+        
+        document.getElementById('next-round').addEventListener('click', () => {
+            const currentRound = parseInt(document.querySelector('.round-current').textContent);
+            if (currentRound < 10) {
+                updateRound(currentRound + 1);
+                switchPhase('setup');
+            }
+        });
+    </script>
+</body>
+</html>
