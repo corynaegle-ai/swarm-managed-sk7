@@ -1,0 +1,222 @@
+.player-setup {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.player-setup h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.player-count {
+  text-align: center;
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+}
+
+.add-player-section {
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.input-group input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.input-group button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.input-group button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.input-group button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #dc3545;
+  text-align: center;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+}
+
+.players-list {
+  margin: 20px 0;
+}
+
+.player-item {
+  margin-bottom: 10px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.player-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.player-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.player-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.player-actions button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.player-actions button:first-child {
+  background-color: #28a745;
+  color: white;
+}
+
+.player-actions button:first-child:hover {
+  background-color: #218838;
+}
+
+.remove-btn {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+.remove-btn:hover {
+  background-color: #c82333 !important;
+}
+
+.player-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.player-edit input {
+  padding: 8px;
+  border: 2px solid #007bff;
+  border-radius: 3px;
+  font-size: 16px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-actions button {
+  padding: 5px 15px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.edit-actions button:first-child {
+  background-color: #28a745;
+  color: white;
+}
+
+.edit-actions button:first-child:hover {
+  background-color: #218838;
+}
+
+.edit-actions button:last-child {
+  background-color: #6c757d;
+  color: white;
+}
+
+.edit-actions button:last-child:hover {
+  background-color: #5a6268;
+}
+
+.start-game-section {
+  text-align: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #ddd;
+}
+
+.start-game-btn {
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.start-game-btn:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.start-game-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .player-setup {
+    padding: 10px;
+  }
+  
+  .input-group {
+    flex-direction: column;
+  }
+  
+  .player-display {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .player-actions {
+    align-self: stretch;
+    justify-content: flex-end;
+  }
+}
