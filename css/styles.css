@@ -1,0 +1,387 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+}
+
+.header p {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+/* Player Setup Styles */
+#player-setup {
+    padding: 2rem;
+}
+
+.setup-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.setup-header h2 {
+    color: #2c3e50;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.setup-header p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+/* Player Form */
+.player-form {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    border: 2px solid #e9ecef;
+    transition: border-color 0.3s ease;
+}
+
+.player-form:focus-within {
+    border-color: #667eea;
+}
+
+.form-group {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.input-group {
+    flex: 1;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+.btn-edit {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-edit:hover {
+    background: linear-gradient(135deg, #ed64a6 0%, #e53e3e 100%);
+}
+
+.btn-remove {
+    background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-remove:hover {
+    background: linear-gradient(135deg, #e53e3e 0%, #3182ce 100%);
+}
+
+.btn-start {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.btn-start:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2196f3 0%, #00bcd4 100%);
+}
+
+.btn-start:disabled {
+    background: #bdc3c7;
+    color: #7f8c8d;
+}
+
+/* Players List */
+.players-section {
+    margin-bottom: 2rem;
+}
+
+.players-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.players-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.player-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.player-item:hover {
+    background: #e9ecef;
+    border-color: #667eea;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.player-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.player-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.no-players {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 2rem;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+}
+
+/* Validation Messages */
+.validation-message {
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-weight: 600;
+    display: none;
+    animation: slideIn 0.3s ease;
+}
+
+.validation-message.error {
+    background: #fee;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+.validation-message.success {
+    background: #f0fff4;
+    color: #22543d;
+    border: 1px solid #9ae6b4;
+}
+
+.validation-message.info {
+    background: #ebf8ff;
+    color: #2c5282;
+    border: 1px solid #90cdf4;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Game View (hidden by default) */
+#game-view {
+    display: none;
+    padding: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        margin: 0;
+    }
+    
+    .header {
+        padding: 1.5rem;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    #player-setup {
+        padding: 1rem;
+    }
+    
+    .form-group {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .player-item {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .player-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .setup-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .btn-edit,
+    .btn-remove {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+    
+    .player-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .player-actions .btn {
+        width: 100%;
+    }
+}
+
+/* Accessibility */
+.btn:focus,
+input:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .player-item {
+        border-color: #000;
+    }
+    
+    .validation-message.error {
+        background: #fff;
+        border-color: #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
