@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard Game</title>
+    <link rel="stylesheet" href="css/scoreboard.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Game Scoreboard</h1>
+        </header>
+        
+        <main>
+            <!-- Current Scores Section -->
+            <section id="current-scores" class="scoreboard-section">
+                <h2>Current Standings</h2>
+                <div id="leaderboard-container">
+                    <table id="leaderboard-table" class="leaderboard">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Player</th>
+                                <th>Score</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <tr class="leader-row">
+                                <td class="rank">1</td>
+                                <td class="player-name">Player 1</td>
+                                <td class="score">1250</td>
+                                <td class="status active">Leading</td>
+                            </tr>
+                            <tr>
+                                <td class="rank">2</td>
+                                <td class="player-name">Player 2</td>
+                                <td class="score">980</td>
+                                <td class="status">Active</td>
+                            </tr>
+                            <tr>
+                                <td class="rank">3</td>
+                                <td class="player-name">Player 3</td>
+                                <td class="score">750</td>
+                                <td class="status">Active</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Round Progress Section -->
+            <section id="round-progress" class="scoreboard-section">
+                <h2>Round Progress</h2>
+                <div id="round-indicator" class="progress-container">
+                    <div class="round-info">
+                        <span class="current-round">Round 3 of 5</span>
+                        <span class="round-status">In Progress</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 60%;"></div>
+                    </div>
+                    <div class="round-stages">
+                        <div class="stage completed">1</div>
+                        <div class="stage completed">2</div>
+                        <div class="stage active">3</div>
+                        <div class="stage">4</div>
+                        <div class="stage">5</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Score History Section -->
+            <section id="score-history" class="scoreboard-section">
+                <h2>Score History</h2>
+                <div id="history-container">
+                    <table id="history-table" class="score-history">
+                        <thead>
+                            <tr>
+                                <th>Round</th>
+                                <th>Player 1</th>
+                                <th>Player 2</th>
+                                <th>Player 3</th>
+                                <th>Round Winner</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body">
+                            <tr class="completed-round">
+                                <td class="round-number">1</td>
+                                <td class="player-score">400</td>
+                                <td class="player-score winner">450</td>
+                                <td class="player-score">300</td>
+                                <td class="round-winner">Player 2</td>
+                            </tr>
+                            <tr class="completed-round">
+                                <td class="round-number">2</td>
+                                <td class="player-score winner">350</td>
+                                <td class="player-score">280</td>
+                                <td class="player-score">320</td>
+                                <td class="round-winner">Player 1</td>
+                            </tr>
+                            <tr class="active-round">
+                                <td class="round-number">3</td>
+                                <td class="player-score current">500</td>
+                                <td class="player-score current">250</td>
+                                <td class="player-score current">130</td>
+                                <td class="round-winner">In Progress</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Final Results Section (Hidden by default) -->
+            <section id="final-results" class="scoreboard-section hidden">
+                <h2>Final Results</h2>
+                <div id="results-container">
+                    <div class="champion-display">
+                        <div class="champion-crown">👑</div>
+                        <h3 class="champion-name">Champion: Player 1</h3>
+                        <p class="champion-score">Final Score: 2450</p>
+                    </div>
+                    <div class="final-standings">
+                        <div class="podium">
+                            <div class="podium-place second">
+                                <div class="place-number">2</div>
+                                <div class="place-player">Player 2</div>
+                                <div class="place-score">2180</div>
+                            </div>
+                            <div class="podium-place first">
+                                <div class="place-number">1</div>
+                                <div class="place-player">Player 1</div>
+                                <div class="place-score">2450</div>
+                            </div>
+                            <div class="podium-place third">
+                                <div class="place-number">3</div>
+                                <div class="place-player">Player 3</div>
+                                <div class="place-score">1890</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Basic interactivity for demo purposes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects and animations
+            const leaderboardRows = document.querySelectorAll('#leaderboard-table tbody tr');
+            leaderboardRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.classList.add('hover');
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.classList.remove('hover');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
