@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scoreboard Tests</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .test-pass { color: green; }
+        .test-fail { color: red; }
+        .test-result { margin: 10px 0; padding: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Scoreboard Implementation Tests</h1>
+    
+    <div class="test-section">
+        <h2>HTML Structure Tests</h2>
+        <div id="html-tests"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>CSS Styling Tests</h2>
+        <div id="css-tests"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Responsive Design Tests</h2>
+        <div id="responsive-tests"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Visual Hierarchy Tests</h2>
+        <div id="visual-tests"></div>
+    </div>
+
+    <script>
+        function runTests() {
+            const results = {
+                html: [],
+                css: [],
+                responsive: [],
+                visual: []
+            };
+
+            // HTML Structure Tests
+            function testHTMLStructure() {
+                // Test for scoreboard section
+                const scoreboardSection = document.querySelector('#current-scores');
+                results.html.push({
+                    name: 'Scoreboard section exists with correct ID',
+                    pass: !!scoreboardSection,
+                    details: scoreboardSection ? 'Found #current-scores section' : 'Missing #current-scores section'
+                });
+
+                // Test for leaderboard table
+                const leaderboardTable = document.querySelector('#leaderboard-table');
+                results.html.push({
+                    name: 'Leaderboard table exists with proper structure',
+                    pass: !!leaderboardTable && leaderboardTable.querySelector('thead') && leaderboardTable.querySelector('tbody'),
+                    details: leaderboardTable ? 'Leaderboard table found with thead/tbody' : 'Missing leaderboard table structure'
+                });
+
+                // Test for round progress section
+                const roundProgress = document.querySelector('#round-progress');
+                results.html.push({
+                    name: 'Round progress section exists',
+                    pass: !!roundProgress,
+                    details: roundProgress ? 'Found #round-progress section' : 'Missing #round-progress section'
+                });
+
+                // Test for score history section
+                const scoreHistory = document.querySelector('#score-history');
+                results.html.push({
+                    name: 'Score history section exists',
+                    pass: !!scoreHistory,
+                    details: scoreHistory ? 'Found #score-history section' : 'Missing #score-history section'
+                });
+
+                // Test for final results section
+                const finalResults = document.querySelector('#final-results');
+                results.html.push({
+                    name: 'Final results section exists',
+                    pass: !!finalResults,
+                    details: finalResults ? 'Found #final-results section' : 'Missing #final-results section'
+                });
+            }
+
+            // CSS Styling Tests
+            function testCSSstyling() {
+                const leaderboardTable = document.querySelector('#leaderboard-table');
+                if (leaderboardTable) {
+                    const computedStyle = window.getComputedStyle(leaderboardTable);
+                    results.css.push({
+                        name: 'Leaderboard table has proper styling',
+                        pass: computedStyle.borderCollapse === 'collapse',
+                        details: `Border collapse: ${computedStyle.borderCollapse}`
+                    });
+                }
+
+                const leaderRow = document.querySelector('.leader-row');
+                if (leaderRow) {
+                    const computedStyle = window.getComputedStyle(leaderRow);
+                    results.css.push({
+                        name: 'Leader row has distinct styling',
+                        pass: computedStyle.borderLeftWidth && computedStyle.borderLeftWidth !== '0px',
+                        details: `Leader row border-left: ${computedStyle.borderLeftWidth}`
+                    });
+                }
+
+                const progressBar = document.querySelector('.progress-bar');
+                if (progressBar) {
+                    const computedStyle = window.getComputedStyle(progressBar);
+                    results.css.push({
+                        name: 'Progress bar has proper styling',
+                        pass: computedStyle.borderRadius && computedStyle.borderRadius !== '0px',
+                        details: `Progress bar border-radius: ${computedStyle.borderRadius}`
+                    });
+                }
+            }
+
+            // Responsive Design Tests
+            function testResponsiveDesign() {
+                const container = document.querySelector('.container');
+                if (container) {
+                    const computedStyle = window.getComputedStyle(container);
+                    results.responsive.push({
+                        name: 'Container has responsive max-width',
+                        pass: computedStyle.maxWidth && computedStyle.maxWidth !== 'none',
+                        details: `Container max-width: ${computedStyle.maxWidth}`
+                    });
+                }
+
+                const main = document.querySelector('main');
+                if (main) {
+                    const computedStyle = window.getComputedStyle(main);
+                    results.responsive.push({
+                        name: 'Main uses grid layout for responsiveness',
+                        pass: computedStyle.display === 'grid',
+                        details: `Main display: ${computedStyle.display}`
+                    });
+                }
+
+                // Test viewport meta tag
+                const viewportMeta = document.querySelector('meta[name="viewport"]');
+                results.responsive.push({
+                    name: 'Viewport meta tag is present',
+                    pass: !!viewportMeta && viewportMeta.content.includes('width=device-width'),
+                    details: viewportMeta ? `Viewport content: ${viewportMeta.content}` : 'Missing viewport meta tag'
+                });
+            }
+
+            // Visual Hierarchy Tests
+            function testVisualHierarchy() {
+                const leaderRow = document.querySelector('.leader-row');
+                const normalRows = document.querySelectorAll('#leaderboard-table tbody tr:not(.leader-row)');
+                
+                if (leaderRow && normalRows.length > 0) {
+                    const leaderStyle = window.getComputedStyle(leaderRow);
+                    const normalStyle = window.getComputedStyle(normalRows[0]);
+                    
+                    results.visual.push({
+                        name: 'Leader row visually distinct from normal rows',
+                        pass: leaderStyle.backgroundColor !== normalStyle.backgroundColor || 
+                              leaderStyle.fontWeight !== normalStyle.fontWeight,
+                        details: `Leader bg: ${leaderStyle.backgroundColor}, Normal bg: ${normalStyle.backgroundColor}`
+                    });
+                }
+
+                const sectionHeadings = document.querySelectorAll('.scoreboard-section h2');
+                results.visual.push({
+                    name: 'Section headings are properly styled',
+                    pass: sectionHeadings.length > 0 && window.getComputedStyle(sectionHeadings[0]).fontSize,
+                    details: `Found ${sectionHeadings.length} section headings`
+                });
+
+                const championDisplay = document.querySelector('.champion-display');
+                if (championDisplay) {
+                    const computedStyle = window.getComputedStyle(championDisplay);
+                    results.visual.push({
+                        name: 'Champion display has special styling',
+                        pass: computedStyle.textAlign === 'center' && computedStyle.padding !== '0px',
+                        details: `Champion text-align: ${computedStyle.textAlign}, padding: ${computedStyle.padding}`
+                    });
+                }
+            }
+
+            // Run all tests
+            testHTMLStructure();
+            testCSSstyling();
+            testResponsiveDesign();
+            testVisualHierarchy();
+
+            // Display results
+            function displayResults(category, containerId) {
+                const container = document.getElementById(containerId);
+                results[category].forEach(test => {
+                    const div = document.createElement('div');
+                    div.className = `test-result ${test.pass ? 'test-pass' : 'test-fail'}`;
+                    div.innerHTML = `
+                        <strong>${test.pass ? '✓ PASS' : '✗ FAIL'}</strong>: ${test.name}<br>
+                        <small>${test.details}</small>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            displayResults('html', 'html-tests');
+            displayResults('css', 'css-tests');
+            displayResults('responsive', 'responsive-tests');
+            displayResults('visual', 'visual-tests');
+
+            // Summary
+            const totalTests = Object.values(results).flat().length;
+            const passedTests = Object.values(results).flat().filter(test => test.pass).length;
+            
+            const summary = document.createElement('div');
+            summary.className = 'test-section';
+            summary.innerHTML = `
+                <h2>Test Summary</h2>
+                <p><strong>${passedTests}/${totalTests}</strong> tests passed</p>
+                <p>Success rate: <strong>${Math.round((passedTests/totalTests) * 100)}%</strong></p>
+            `;
+            document.body.appendChild(summary);
+        }
+
+        // Load the CSS file and run tests
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '../css/scoreboard.css';
+        document.head.appendChild(link);
+
+        // Create a temporary iframe to test the main HTML
+        const iframe = document.createElement('iframe');
+        iframe.src = '../index.html';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+
+        iframe.onload = function() {
+            // Copy relevant elements from iframe for testing
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            const elementsToTest = [
+                '#current-scores', '#leaderboard-table', '#round-progress', 
+                '#score-history', '#final-results', '.leader-row', '.progress-bar',
+                '.champion-display', '.container', 'main'
+            ];
+            
+            elementsToTest.forEach(selector => {
+                const element = iframeDoc.querySelector(selector);
+                if (element) {
+                    document.body.appendChild(element.cloneNode(true));
+                }
+            });
+
+            // Copy the viewport meta tag
+            const viewportMeta = iframeDoc.querySelector('meta[name="viewport"]');
+            if (viewportMeta) {
+                document.head.appendChild(viewportMeta.cloneNode(true));
+            }
+
+            setTimeout(runTests, 100); // Allow styles to load
+        };
+    </script>
+</body>
+</html>
