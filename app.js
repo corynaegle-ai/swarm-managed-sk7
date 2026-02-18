@@ -1,46 +1,75 @@
-// Main JS entry point for Vanilla JS App
+/**
+ * Main application state and initialization
+ */
+class AppState {
+    constructor() {
+        this.initialized = false;
+        this.data = {
+            appName: 'Vanilla JS App',
+            version: '1.0.0',
+            startTime: new Date()
+        };
+    }
 
-// Application state object
-const appState = {
-    initialized: false,
-    version: '1.0.0',
-    debug: true
-};
-
-// Initialize application
-function initApp() {
-    try {
-        console.log('Initializing Vanilla JS App...');
-        
-        // Set initialized flag
-        appState.initialized = true;
-        
-        // Log successful initialization
-        if (appState.debug) {
-            console.log('App initialized successfully:', appState);
+    updateStatus(message) {
+        const statusElement = document.getElementById('status');
+        if (statusElement) {
+            statusElement.textContent = message;
         }
-        
-        // Add any initial event listeners or setup here
-        setupEventListeners();
-        
-    } catch (error) {
-        console.error('Failed to initialize app:', error);
-        appState.initialized = false;
+    }
+
+    initialize() {
+        try {
+            this.initialized = true;
+            this.updateStatus(`${this.data.appName} v${this.data.version} initialized successfully at ${this.data.startTime.toLocaleTimeString()}`);
+            console.log('App state initialized:', this.data);
+            return true;
+        } catch (error) {
+            console.error('Failed to initialize app state:', error);
+            this.updateStatus('Failed to initialize application');
+            return false;
+        }
     }
 }
 
-// Setup event listeners
-function setupEventListeners() {
-    // Example event listener setup
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM fully loaded');
-    });
+/**
+ * Main application initialization
+ */
+function initializeApp() {
+    try {
+        // Create global app state
+        window.appState = new AppState();
+        
+        // Initialize the application
+        const success = window.appState.initialize();
+        
+        if (success) {
+            console.log('Application initialized successfully');
+        } else {
+            console.error('Application initialization failed');
+        }
+        
+        return success;
+    } catch (error) {
+        console.error('Critical error during app initialization:', error);
+        return false;
+    }
 }
 
-// Initialize app when script loads
-initApp();
-
-// Export state for debugging (if needed)
-if (appState.debug) {
-    window.appState = appState;
+/**
+ * DOM ready initialization - handles both cases properly
+ */
+function domReady(callback) {
+    if (document.readyState === 'loading') {
+        // DOM is still loading, wait for DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', callback);
+    } else {
+        // DOM is already loaded, execute immediately
+        callback();
+    }
 }
+
+// Initialize app when DOM is ready
+domReady(function() {
+    initializeApp();
+});
